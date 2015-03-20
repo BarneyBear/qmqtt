@@ -90,9 +90,10 @@ class QMQTTSHARED_EXPORT Client : public QObject
 
     Q_DISABLE_COPY(Client)
 
-    P_DECLARE_PRIVATE(QMQTT::Client)
 
-    //friend class ClientPrivate;
+    friend class ClientPrivate;
+
+    State internalState;
 
 public:
     Client(const QString &host = "localhost", quint32 port = 1883, QObject * parent = 0);
@@ -170,7 +171,7 @@ private slots:
     void handlePuback(quint8 type, quint16 msgid);
 
 protected:
-    ClientPrivate * const pd_ptr;
+    ClientPrivate * const pPrivateClient;
 
 };
 

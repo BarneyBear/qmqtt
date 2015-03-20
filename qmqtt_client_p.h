@@ -44,13 +44,13 @@
 
 namespace QMQTT {
 
+class Client;
 class ClientPrivate
 {
-
-    P_DECLARE_PUBLIC(QMQTT::Client)
+    friend class Client;
 
 public:
-    explicit  ClientPrivate(Client * q);
+    explicit  ClientPrivate(Client * pClient);
     ~ClientPrivate();
     void init(QObject * parent = 0);
     void init(const QString & host, int port, QObject *parent = 0);
@@ -64,14 +64,9 @@ public:
     QString password;
     bool cleansess;
     int keepalive;
-
-    State state;
-
     QPointer<QMQTT::Will> will;
     QPointer<QMQTT::Network> network;
     QPointer<QTimer> timer;
-
-    Client * const pq_ptr;
 
 public slots:
     void sockConnect();
@@ -89,7 +84,7 @@ public slots:
 private:
     QString randomClientId();
     quint16 nextmid();
-
+    Client * pClient;
 };
 
 } // namespace QMQTT

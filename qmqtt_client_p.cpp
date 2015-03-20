@@ -35,35 +35,37 @@
 
 namespace QMQTT {
 
-ClientPrivate::ClientPrivate(Client *q) :
+ClientPrivate::ClientPrivate(Client *pClient) :
     host("localhost"),
     port(1883),
     keepalive(300),
-    pq_ptr(q)
+    pClient(pClient)
 {
     gmid= 1;
 }
 
 ClientPrivate::~ClientPrivate()
 {
-
+    if(network->isConnected()) {
+        this->disconnect();
+    }
 }
 
 void ClientPrivate::init(QObject * parent)
 {
-    pq_func()->setParent(parent);
+    pClient->setParent(parent);
     if(!timer) {
-        timer = new QTimer(pq_func());
+        timer = new QTimer(pClient);
     }
-    QObject::connect(timer, SIGNAL(timeout()), pq_func(), SLOT(ping()));
+    QObject::connect(timer, SIGNAL(timeout()), pClient, SLOT(ping()));
     if(!network){
-        network = new Network(pq_func());
+        network = new Network(pClient);
     }
     //TODO: FIXME LATER, how to handle socket error?
-    QObject::connect(network, SIGNAL(connected()), pq_func(), SLOT(onConnected()));
-    QObject::connect(network, SIGNAL(error(QAbstractSocket::SocketError)), pq_func(), SIGNAL(error(QAbstractSocket::SocketError)));
-    QObject::connect(network, SIGNAL(disconnected()), pq_func(), SLOT(onDisconnected()));
-    QObject::connect(network, SIGNAL(received(Frame &)), pq_func(), SLOT(onReceived(Frame &)));
+    QObject::connect(network, SIGNAL(connected()), pClient, SLOT(onConnected()));
+    QObject::connect(network, SIGNAL(error(QAbstractSocket::SocketError)), pClient, SIGNAL(error(QAbstractSocket::SocketError)));
+    QObject::connect(network, SIGNAL(disconnected()), pClient, SLOT(onDisconnected()));
+    QObject::connect(network, SIGNAL(received(Frame &)), pClient, SLOT(onReceived(Frame &)));
 }
 
 void ClientPrivate::init(const QString &host, int port, QObject * parent)
