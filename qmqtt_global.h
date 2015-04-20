@@ -34,6 +34,11 @@
 
 #include <QtCore/qglobal.h>
 
+//custom define for windows OS only
+#ifdef Q_OS_WIN
+#   define QMQTT_LIBRARY
+#endif
+
 #if defined(QMQTT_LIBRARY)
 #  define QMQTTSHARED_EXPORT Q_DECL_EXPORT
 #else
