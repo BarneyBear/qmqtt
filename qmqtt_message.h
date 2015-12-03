@@ -66,6 +66,8 @@ public:
     QByteArray payload() const;
     void setPayload(const QByteArray & payload);
 
+    QString stringPayload() const;
+
 private:
     quint16 _id;
     QString _topic;

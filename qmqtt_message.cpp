@@ -113,6 +113,11 @@ QByteArray Message::payload() const
     return _payload;
 }
 
+QString Message::stringPayload() const
+{
+    return QString::fromUtf8(_payload);
+}
+
 void Message::setPayload(const QByteArray &payload)
 {
     _payload = payload;

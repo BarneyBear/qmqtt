@@ -131,7 +131,8 @@ public:
      */
 public slots:
     void connect();
-    quint16 publish(Message &message);
+    quint16 publish(QMQTT::Message& message);
+    quint16 publish(quint16 id, const QString& topic, const QByteArray& payload, quint8 qos = 0, bool retain = false, bool dup = false);
     void puback(quint8 type, quint16 msgid);
     /*
     void pubrec(int msgid);
@@ -152,6 +153,7 @@ signals:
     void pubacked(quint8 type, quint16 msgid);
     //receive PUBLISH
     void received(const QMQTT::Message &message);
+    void received(quint16 id, const QString& topic, const QByteArray& payload, quint8 qos, bool retain, bool dup);
     //send SUBSCRIBE and receive SUBACKED
     void subscribed(const QString &topic);
     void subacked(quint16 mid, quint8 qos);

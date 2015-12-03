@@ -168,7 +168,13 @@ void Client::onConnected()
     emit connected();
 }
 
-quint16 Client::publish(Message &message)
+quint16 Client::publish(quint16 id, const QString& topic, const QByteArray& payload, quint8 qos, bool retain, bool dup)
+{
+    Message message(id, topic, payload, qos, retain, dup);
+    return this->publish(message);
+}
+
+quint16 Client::publish(QMQTT::Message& message)
 {
     quint16 msgid = pPrivateClient->sendPublish(message);
     emit published(message);
@@ -222,7 +228,6 @@ void Client::onReceived(Frame &frame)
     quint8 header = frame.header();
     quint8 type = GETTYPE(header);
     Message message;
-    qDebug("handleFrame: type=%d", type);
 
     switch(type) {
     case CONNACK:
@@ -283,6 +288,7 @@ void Client::handlePublish(Message & message)
         pPrivateClient->sendPuback(PUBREC, message.id());
     }
     emit received(message);
+    emit received(message.id(), message.topic(), message.payload(), message.qos(), message.retain(), message.dup());
 }
 
 void Client::handlePuback(quint8 type, quint16 msgid)

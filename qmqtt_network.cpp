@@ -125,14 +125,12 @@ void Network::setAutoReconnect(bool b)
 //PRIVATE SLOTS
 void Network::sockConnected()
 {
-    qDebug("Network connected...");
     _connected = true;
     emit connected();
 }
 
 void Network::sockReadReady()
 {
-    qDebug("sockReadReady...");
     QDataStream in(_socket);
     QDataStream out(_buffer);
     while(!_socket->atEnd())
@@ -155,7 +153,6 @@ void Network::sockReadReady()
             _buffer->reset();
             Frame frame(_header, _buffer->buffer());
             _buffer->buffer().clear();
-            qDebug("network emit received(frame), header: %d", _header);
             emit received(frame);
         }
     }
