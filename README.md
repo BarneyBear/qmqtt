@@ -3,7 +3,48 @@ QMQTT
 
 mqtt client for Qt
 
-Usage
+QML Usage
+=====
+	//in main.cpp
+	#include "qmqtt.h"
+
+	int main(int argc, char* argv[]) {
+		qmlRegisterType<QMQTT::Client>("os.interaktionsbyran.mqtt", 1, 0, "MqttClient");
+		qmlRegisterType<QMQTT::Will>("os.interaktionsbyran.mqtt", 1, 0, "MqttWill");
+
+		//...
+	}
+
+
+	//in qml
+	MqttClient {
+		id: mqttclient
+		host: "localhost"
+		port: 1883
+
+		will: MqttWill {
+			topic: "will"
+			message: "avenge me!"
+			retain: true
+		}
+
+		onConnected: {
+			mqttclient.subscribe("my/topic")
+			mqttclient.publish(0, "my/topic/greetings", "hello"); //Regular mesasge
+			mqttclient.publish(0, "my/topic/derp", "herp", 0, true); //Retained message
+		}
+
+		onReceived: {
+			console.log(topic, payload, qos, retain, dup);
+		}
+
+		Component.onCompleted {
+			mqttclient.connect();
+		}
+	}
+
+
+C++ Usage
 =====
 
 	#include "qmqtt.h"
