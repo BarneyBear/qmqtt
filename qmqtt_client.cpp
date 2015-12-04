@@ -161,7 +161,6 @@ void Client::connect()
 
 void Client::onConnected()
 {
-    qDebug("Sock Connected....");
     pPrivateClient->sendConnect();
     pPrivateClient->startKeepalive();
     internalState = STATE_CONNECTED;
@@ -276,7 +275,6 @@ void Client::onReceived(Frame &frame)
 
 void Client::handleConnack(quint8 ack)
 {
-    qDebug("connack: %d", ack);
     emit connacked(ack);
 }
 

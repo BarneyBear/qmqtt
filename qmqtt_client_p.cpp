@@ -85,13 +85,8 @@ void ClientPrivate::sendConnect()
     QString magic(PROTOCOL_MAGIC);
     quint8 header = CONNECT;
     quint8 flags = 0;
-
-    qDebug("sendConnect....");
     //header
     Frame frame(SETQOS(header, MQTT_QOS1));
-
-    qDebug("CONNECT header: %d", frame.header());
-
     //flags
     flags = FLAG_CLEANSESS(flags, cleansess ? 1 : 0 );
     flags = FLAG_WILL(flags, will ? 1 : 0);
