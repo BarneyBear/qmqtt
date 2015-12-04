@@ -40,9 +40,13 @@ namespace QMQTT {
 class Will : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString topic READ topic WRITE setTopic);
+    Q_PROPERTY(QString message READ message WRITE setMessage);
+    Q_PROPERTY(quint8 qos READ qos WRITE setQos);
+    Q_PROPERTY(bool retain READ retain WRITE setRetain);
 
 public:
-    explicit Will(const QString & topic, const QString & msg, quint8 qos = 0, bool retain = false, QObject * parent = 0);
+    explicit Will(const QString & topic = "", const QString & msg ="", quint8 qos = 0, bool retain = false, QObject * parent = 0);
     ~Will();
 
     quint8 qos();

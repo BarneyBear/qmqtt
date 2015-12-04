@@ -87,6 +87,7 @@ class QMQTTSHARED_EXPORT Client : public QObject
     Q_PROPERTY(QString password READ password WRITE setPassword);
     Q_PROPERTY(int keepalive READ keepalive WRITE setKeepAlive);
     Q_PROPERTY(bool autoReconnect READ autoReconnect WRITE setAutoReconnect);
+    Q_PROPERTY(QMQTT::Will* will READ will WRITE setWill);
 
     Q_DISABLE_COPY(Client)
 
