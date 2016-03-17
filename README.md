@@ -29,7 +29,7 @@ QML Usage
 		}
 
 		onConnected: {
-			mqttclient.subscribe("my/topic")
+			mqttclient.subscribe("my/topic", 0);
 			mqttclient.publish(0, "my/topic/greetings", "hello"); //Regular mesasge
 			mqttclient.publish(0, "my/topic/derp", "herp", 0, true); //Retained message
 		}
@@ -49,7 +49,7 @@ C++ Usage
 
 	#include "qmqtt.h"
 
-	QMQTT::Client *client = new QMQTT::Client("localhost", 18883);
+	QMQTT::Client *client = new QMQTT::Client("localhost", 1883);
 
 	client->setClientId("clientId");
 
