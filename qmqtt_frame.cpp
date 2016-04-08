@@ -116,7 +116,6 @@ void Frame::write(QDataStream &stream)
         stream << (quint8)0;
         return;
     }
-    qDebug("_data.size: %d", _data.size());
     encodeLength(lenbuf, _data.size());
     stream.writeRawData(lenbuf.data(), lenbuf.size());
     stream.writeRawData(_data.data(), _data.size());
