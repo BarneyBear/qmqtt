@@ -65,6 +65,10 @@ QByteArray & Frame::data()
 
 char Frame::readChar()
 {
+    if (_data.size() < 1) {
+        throw std::out_of_range("Not enought data to readChar");
+    }
+
     char c = _data.at(0);
     _data.remove(0, 1);
     return c;
@@ -72,6 +76,10 @@ char Frame::readChar()
 
 int Frame::readInt()
 {
+    if (_data.size() < 2) {
+        throw std::out_of_range("Not enought data to readInt");
+    }
+
     char msb = _data.at(0);
     char lsb = _data.at(1);
     _data.remove(0, 2);
@@ -80,7 +88,16 @@ int Frame::readInt()
 
 QString Frame::readString()
 {
+    if (_data.size() < 2) {
+        throw std::out_of_range("Not enought data to read string length");
+    }
+
     int len = readInt();
+
+    if (_data.size() < len) {
+        throw std::out_of_range("Not enought data to readString");
+    }
+
     QString s(_data.left(len));
     _data.remove(0, len);
     return s;

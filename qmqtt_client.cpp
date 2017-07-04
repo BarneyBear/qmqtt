@@ -33,6 +33,9 @@
 #include "qmqtt_client.h"
 #include "qmqtt_client_p.h"
 
+#include "stdio.h"
+#include "stdlib.h"
+
 namespace QMQTT {
 
 Client::Client(const QString & host, quint32 port, QObject * parent /* =0 */)
@@ -231,36 +234,56 @@ void Client::onReceived(Frame &frame)
     switch(type) {
     case CONNACK:
         //skip reserved
-        frame.readChar();
-        handleConnack(frame.readChar());
+        try {
+            frame.readChar();
+            handleConnack(frame.readChar());
+        } catch (std::out_of_range& e) {
+            // partial frame received, just drop it for now
+            fprintf(stderr, "connack dropped frame: %s\n", e.what());
+        }
         break;
     case PUBLISH:
-        qos = GETQOS(header);;
-        retain = GETRETAIN(header);
-        dup = GETDUP(header);
-        topic = frame.readString();
-        if( qos > MQTT_QOS0) {
-            mid = frame.readInt();
+        try {
+            qos = GETQOS(header);
+            retain = GETRETAIN(header);
+            dup = GETDUP(header);
+            topic = frame.readString();
+            if(qos > MQTT_QOS0) {
+                mid = frame.readInt();
+            }
+            message.setId(mid);
+            message.setTopic(topic);
+            message.setPayload(frame.data());
+            message.setQos(qos);
+            message.setRetain(retain);
+            message.setDup(dup);
+            handlePublish(message);
+        } catch (std::out_of_range& e) {
+            // partial frame received, just drop it for now
+            fprintf(stderr, "publish dropped frame: %s\n", e.what());
         }
-        message.setId(mid);
-        message.setTopic(topic);
-        message.setPayload(frame.data());
-        message.setQos(qos);
-        message.setRetain(retain);
-        message.setDup(dup);
-        handlePublish(message);
         break;
     case PUBACK:
     case PUBREC:
     case PUBREL:
     case PUBCOMP:
-        mid = frame.readInt();
-        handlePuback(type, mid);
+        try {
+            mid = frame.readInt();
+            handlePuback(type, mid);
+        } catch(std::out_of_range& e) {
+            // partial frame received, just drop it for now
+            fprintf(stderr, "puback dropped frame: %s\n", e.what());
+        }
         break;
     case SUBACK:
-        mid = frame.readInt();
-        qos = frame.readChar();
-        emit subacked(mid, qos);
+        try {
+            mid = frame.readInt();
+            qos = frame.readChar();
+            emit subacked(mid, qos);
+        } catch (std::out_of_range& e) {
+            // partial frame received, just drop it for now
+            fprintf(stderr, "suback dropped frame: %s\n", e.what());
+        }
         break;
     case UNSUBACK:
         emit unsubacked(mid);
